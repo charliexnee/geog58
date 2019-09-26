@@ -1,0 +1,63 @@
+---
+title: "Chapter 2 Exercises"
+output: html_notebook
+---
+```{r}
+library(sf)
+library(spData)
+library(sp)
+library(raster)
+```
+## Question 1
+Use summary() on the geometry column of the world data object. What does the output tell us about:
+-Its geometry type?
+-The number of countries? 
+-Its coordinate reference system (CRS)? 
+
+```{r}
+summary(world["geom"])
+```
+Geometry Type: MULTIPOLYGON
+Number of Countries: 177 (can be seen from num of polygons)
+CRS:  WGS84 (EPSG 4326)
+
+## Question 2 
+-What does the cex argument do (see ?plot)?
+-Why was cex set to the sqrt(world$pop) / 10000?
+-Bonus: experiment with different ways to visualize the global population.
+
+```{r}
+plot(world["continent"], reset = FALSE)
+cex = sqrt(world$pop) / 10000
+world_cents = st_centroid(world, of_largest = TRUE)
+plot(st_geometry(world_cents), add = TRUE, cex = cex)
+```
+Differences: This map is a mercator projection while the one in the book isn't, the circles in the book's map are thicker
+cex is the symbol size or the size of each circle
+cex is set to sqrt(world$pop) / 10000 so the size of the circle is proportionate to the size of each country
+
+## Question 3
+
+```{r}
+nigeria = world[world$name_long == "Nigeria", ]
+plot(st_geometry(nigeria), expandBB = c(3, 0.2, 0.1, 1), col = "pink", lwd = 4)
+africa = world[world$continent == "Africa",]
+plot(africa[0], add = TRUE)
+
+
+```
+
+## Question 4
+```{r}
+my_raster = raster(nrows = 10, ncols = 10)
+values = vector(mode = "numeric", length = 100)
+for (i in 1:100){
+    values[i] = sample(1:10, 1)
+}
+my_raster = setValues(my_raster, values)
+getValues(my_raster)
+
+ plot(my_raster, col = hcl.colors(10, palette = "viridis", alpha = NULL, rev = FALSE, fixup = TRUE)
+, maxpixels = 100)
+```
+

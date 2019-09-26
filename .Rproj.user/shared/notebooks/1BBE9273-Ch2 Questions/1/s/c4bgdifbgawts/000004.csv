@@ -1,0 +1,5 @@
+"0","cex = sqrt(world$pop) / 10000"
+"0","world_cents = st_centroid(world, of_largest = TRUE)"
+"2","st_centroid assumes attributes are constant over geometries of x"
+"2","st_centroid does not give correct centroids for longitude/latitude data"
+"0","plot(st_geometry(world_cents), add = TRUE, cex = cex)"

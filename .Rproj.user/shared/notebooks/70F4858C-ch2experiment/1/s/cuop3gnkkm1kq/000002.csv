@@ -1,0 +1,2 @@
+"0","world_sp = as(world, Class = ""Spatial"")"
+"0","world_sf = st_as_sf(world_sp)"

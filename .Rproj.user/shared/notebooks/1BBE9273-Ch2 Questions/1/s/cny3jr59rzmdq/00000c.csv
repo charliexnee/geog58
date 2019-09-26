@@ -1,0 +1,2 @@
+"0","nigeria = world[world$name_long == ""Nigeria"", ]"
+"0","plot(st_geometry(nigeria), expandBB = c(0, 0.2, 0.1, 1), col = ""gray"", lwd = 3)"
