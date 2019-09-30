@@ -61,3 +61,11 @@ getValues(my_raster)
 , maxpixels = 100)
 ```
 
+## Question 5
+
+```{r}
+nlcd = raster(system.file("raster/nlcd2011.tif", package = "spDataLarge"))
+nlcd
+```
+You can get the class, dimensions, resolution, extent, information such as projection, szone, units, the source, names, and the min max values
+
