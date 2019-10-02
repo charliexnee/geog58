@@ -51,11 +51,15 @@ plot(africa[0], add = TRUE)
 ```{r}
 my_raster = raster(nrows = 10, ncols = 10)
 values = vector(mode = "numeric", length = 100)
-for (i in 1:100){
-    values[i] = sample(1:10, 1)
-}
+ for (i in 1:100){
+    values[i] = sample(1:10, 1);
+ }
+
+# I thought there was a better way to generate random numbers 100 times than a loop so I tried this but it didn't seem to work so I went back to the loop
+# sapply(values, sample, 1:10, 1)
 my_raster = setValues(my_raster, values)
-getValues(my_raster)
+# This line was from when I was trying to make sure my numbers were generating properly
+#getValues(my_raster)
 
  plot(my_raster, col = hcl.colors(10, palette = "viridis", alpha = NULL, rev = FALSE, fixup = TRUE)
 , maxpixels = 100)
