@@ -1,9 +1,17 @@
 ---
 title: "Chapter 2 Exercises"
 output:
-  pdf_document: default
+  html_document:
+    df_print: paged
   html_notebook: default
+  pdf_document: default
 ---
+
+Note: You can open the .html file to see everything nicely formatted. 
+
+## Reading Response
+Couclelis weighs in on the raster vs vector debate through both discussing the practical uses and the ways that we use raster and vector forms to display our conceptualizations of the world. For example, we practically use vector because of its history in spatial analysis to represent items that can be manipulated the way that we often the view the world as discrete objects to be manipulated. Raster represents how we view the world as continous space with various attributes and that clusters of space with the same attributes are loosely viewed as objects.   
+However Couclelis's paper is the most interesting when pushing the reader to go beyond traditional raster/vector understanding, showing that the world is not made up of as many objects as our mind concieves nor can it the significance of discrete objects be always reduced down to spread out attributes. Couclelis also argues that vector is best used for manipulation while raster is best used for description, but sometimes we may want to do neither. I appreciated Couclelis's suggestion of creating fields that are not data layers and to use object oriented programming instead of euclidian lines, points, and polygons to represent objects, but I am unsure how ot implement these ideas without them becoming interchangable with vector and raster as opposed to alternatives.I prefer the suggestion of looking at space relationally, as that seems dismantle and thus expand the field-object dichotomy as opposed to simply reinforncing it with different methods.
 ```{r}
 library(sf)
 library(spData)
@@ -27,7 +35,7 @@ CRS:  WGS84 (EPSG 4326)
 -Why was cex set to the sqrt(world$pop) / 10000?
 -Bonus: experiment with different ways to visualize the global population.
 
-This code was taken from the book but copied into this file for convenience 
+This code was taken from the book but copied into this file for convenience.
 
 ```{r}
 plot(world["continent"], reset = FALSE)
@@ -35,9 +43,10 @@ cex = sqrt(world$pop) / 10000
 world_cents = st_centroid(world, of_largest = TRUE)
 plot(st_geometry(world_cents), add = TRUE, cex = cex)
 ```
-Differences: This map is a mercator projection while the one in the book isn't, the circles in the book's map are thicker
-cex is the symbol size or the size of each circle
-cex is set to sqrt(world$pop) / 10000 so the size of the circle is proportionate to the size of each country
+Differences: This map is a mercator projection while the one in the book isn't, the circles in the book's map are thicker.  
+cex is the symbol size or the size of each circle.  
+cex is set to sqrt(world$pop) / 10000 so the size of the circle is proportionate to the size of each country.  
+I don't really understand the warnings.
 
 
 ## Question 3
