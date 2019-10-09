@@ -1,0 +1,160 @@
+---
+title: "Chapter 3"
+output: html_notebook
+---
+0. Load libraries
+```{r}
+library(spData)
+library(dplyr)
+library(RQGIS)
+data(us_states)
+data(us_states_df)
+```
+
+1. Create a new object called us_states_name that contains only the NAME column from the us_states object. What is the class of the new object and what makes it geographic?
+
+```{r}
+us_states_name= us_states[, 2]
+class(us_states_name)
+```
+
+2. Select columns from the us_states object which contain population data. Obtain the same result using a different command (bonus: try to find three ways of obtaining the same result). Hint: try to use helper functions, such as contains or starts_with from dplyr (see ?contains).
+
+```{r}
+population1 = us_states[ , 5:6]
+
+population2 = data.frame(us_states$total_pop_10, us_states$total_pop_15)
+```
+
+3. Find all states with the following characteristics (bonus find and plot them):
+Belong to the Midwest region.
+Belong to the West region, have an area below 250,000 km2 and in 2015 a population greater than 5,000,000 residents (hint: you may need to use the function units::set_units() or as.numeric()).
+Belong to the South region, had an area larger than 150,000 km2 or a total population in 2015 larger than 7,000,000 residents.
+
+```{r}
+found_states = us_states[us_states$REGION == "Midwest" | (us_states$REGION == "West" & us_states$AREA  < units::set_units(250000, km^2) |us_states$total_pop_15 > 5000000) | (us_states$REGION == "South" & (us_states$AREA < units::set_units(150000, km^2)|us_states$total_pop_15 > 7000000)),]
+
+```
+
+4. What was the total population in 2015 in the us_states dataset? What was the minimum and maximum total population in 2015?
+```{r}
+sum(us_states$total_pop_15)
+min(us_states$total_pop_15)
+max(us_states$total_pop_15)
+```
+
+5. How many states are there in each region?
+```{r}
+nrow(us_states[us_states$REGION == "Midwest", ])
+nrow(us_states[us_states$REGION == "West", ])
+nrow(us_states[us_states$REGION == "Norteast", ])
+nrow(us_states[us_states$REGION == "South", ])
+```
+
+6. What was the minimum and maximum total population in 2015 in each region? What was the total population in 2015 in each region?
+```{r}
+sum(us_states[us_states$REGION == "Midwest", ]$total_pop_15)
+min(us_states[us_states$REGION == "Midwest", ]$total_pop_15)
+max(us_states[us_states$REGION == "Midwest", ]$total_pop_15)
+
+sum(us_states[us_states$REGION == "West", ]$total_pop_15)
+min(us_states[us_states$REGION == "West", ]$total_pop_15)
+max(us_states[us_states$REGION == "West", ]$total_pop_15)
+
+sum(us_states[us_states$REGION == "South", ]$total_pop_15)
+min(us_states[us_states$REGION == "South", ]$total_pop_15)
+max(us_states[us_states$REGION == "South", ]$total_pop_15)
+
+sum(us_states[us_states$REGION == "Norteast", ]$total_pop_15)
+min(us_states[us_states$REGION == "Norteast", ]$total_pop_15)
+max(us_states[us_states$REGION == "Norteast", ]$total_pop_15)
+```
+
+7. Add variables from us_states_df to us_states, and create a new object called us_states_stats. What function did you use and why? Which variable is the key in both datasets? What is the class of the new object?
+```{r}
+us_states_stats = left_join(us_states, us_states_df, by = c("NAME" = "state"))
+class(us_states_stats)
+```
+
+8. us_states_df has two more rows than us_states. How can you find them? (hint: try to use the dplyr::anti_join() function)
+```{r}
+anti_join(us_states_df, us_states, by= c("state" = "NAME"))
+```
+
+9. What was the population density in 2015 in each state? What was the population density in 2010 in each state?
+```{r}
+pop_density_15 = us_states$total_pop_15/as.numeric(us_states$AREA)
+pop_density_10 = us_states$total_pop_10/as.numeric(us_states$AREA)
+
+pop_density_15
+pop_density_10
+```
+
+10. How much has population density changed between 2010 and 2015 in each state? Calculate the change in percentages and map them.
+```{r}
+percent_change = ((pop_density_15 - pop_density_10) / pop_density_10)*100 
+percent_change
+# don't forget to map 
+us_states$percent_change= percent_change
+plot(us_states["percent_change"], expandBB = c(.01, .01, 0.01, .01),lwd =1)
+
+```
+
+11. Change the columns’ names in us_states to lowercase. (Hint: helper functions - tolower() and colnames() may help.)
+```{r}
+names <- colnames(us_states)
+colnames(us_states) = tolower(names)
+```
+
+12. Using us_states and us_states_df create a new object called us_states_sel. The new object should have only two variables - median_income_15 and geometry. Change the name of the median_income_15 column to Income.
+```{r}
+us_states_temp = left_join(us_states, us_states_df, by = c("name" = "state"))
+us_states_sel = select(us_states_temp, "median_income_15", "geometry")
+colnames(us_states_sel)[1] <- "Income"
+
+```
+
+13.Calculate the change in median income between 2010 and 2015 for each state. Bonus: What was the minimum, average and maximum median income in 2015 for each region? What is the region with the largest increase of the median income?
+```{r}
+income_percent_change = (us_states_df$median_income_15 - us_states_df$median_income_10)/ (us_states_df$median_income_10)*100 
+income_percent_change
+```
+
+14. Create a raster from scratch with nine rows and columns and a resolution of 0.5 decimal degrees (WGS84). Fill it with random numbers. Extract the values of the four corner cells.
+
+```{r}
+random = raster(nrows = 9, ncol = 9, vals = runif(81, 0.0, 1.0), res= c(.5, .5), xmn = 0, ymn = 0, xmx = 4.5, ymx = 4.5)
+res(random)
+plot(random, col = hcl.colors(10, palette = "viridis", alpha = NULL), maxpixels = 81)
+row_1 = getValues(random, row=1)
+row_9 = getValues(random, row=9)
+row_1[1]
+row_1[9]
+row_9[1]
+row_9[9]
+```
+
+15. What is the most common class of our example raster grain (hint: modal())?
+```{r}
+# this code is from the book to build grain
+elev = raster(nrows = 6, ncols = 6, res = 0.5,
+              xmn = -1.5, xmx = 1.5, ymn = -1.5, ymx = 1.5, vals = 1:36)
+grain_order = c("clay", "silt", "sand")
+grain_char = sample(grain_order, 36, replace = TRUE)
+grain_fact = factor(grain_char, levels = grain_order)
+grain = raster(nrows = 6, ncols = 6, res = 0.5, 
+               xmn = -1.5, xmx = 1.5, ymn = -1.5, ymx = 1.5,
+               vals = grain_fact)
+
+# apply modal to every factor
+cellStats(grain, modal) %>%
+  factorValues(grain, .)
+factorValues(grain, modal(values(grain)))
+```
+
+16. Plot the histogram and the boxplot of the data(dem, package = "RQGIS") raster.
+```{r}
+hist(dem)
+boxplot(dem)
+```
+
