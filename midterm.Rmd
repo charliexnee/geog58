@@ -1,0 +1,53 @@
+---
+title: "R Notebook"
+output: html_notebook
+author: "Charlie Nee"
+---
+## 0. Load Libraries
+```{r}
+library(sf)
+library(spData)
+library(spDataLarge)
+library(sp)
+library(raster)
+```
+
+
+## 1. Using the world dataset produce a plot of all the countries in the world that highlights, with a different color fill, the five countries with the lowest life expectancy. Add a title that describes the contents of the plot. Include the results of this process as comments in your code.
+ 
+```{r}
+fifth_lowest_value = sort(world$lifeExp)[5]
+five_rows = world[(world$lifeExp <= fifth_lowest_value & !is.na(world$lifeExp)), ] 
+five_rows
+plot(st_geometry(st_geometry(world)), main= "Five Lowest Life Expectancies")
+plot(st_geometry(five_rows), add=TRUE, col = "red")
+```
+
+## 2. Also using the world dataset: make a plot of the African continent that includes circles placed on the centroid of each country. The circles should be scaled according to the life expectancy in each country. Write a small paragraph (200-250 words) describing the results, which incorporates references to some key values from the attribute table.
+```{r}
+africa = world[world$continent == "Africa", ]
+plot(st_geometry(africa))
+cex = sqrt(africa$lifeExp)/3
+africa_cents = st_centroid(africa, of_largest = TRUE)
+plot(st_geometry(africa_cents), add = TRUE, cex = cex)
+```
+  
+
+## 3. Using the world and coffee datasets, make a plot that shows the change in coffee production from 2016 to 2017. Write a small paragraph (200-250 words) describing the results, which incorporates references to some key values from the attribute table.
+```{r}
+
+```
+ 
+
+## 4, Using the nz and the nz_height datasets, subset all the points with elevation equal to, or above 3000 and indicate how many are in each region. Make a plot that colors the regions according to how many peaks of this elevation are located within each of them.
+ 
+```{r}
+
+```
+
+## 5. Rasters Write a paragraph (200 – 250 words) explaining the main characteristics of raster data, contrast them with vector data, and explain the differences between the RasterLayer, RasterStack, and RasterBrick objects in R. Create a 10 x 10 raster layer, choose a resolution, and assign random values to the cells. Classify the raster into four land use categories of your choice and plot the results. Write a 200-250 word paragraph explaining the process, the results, and how each of the choices that you made, when scaled into larger decision-making systems, could have implications in the real world.
+
+```{r}
+
+```
+
